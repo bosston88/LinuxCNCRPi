@@ -128,37 +128,59 @@ void read_i2c(void *arg, long period)
 	*(dat->data_in) = ;
 }
 
+static void wait_i2c_done(void) {
+    while ((!((BCM2835_BSC1_S) & BSC_S_DONE))) {
+        udelay(100);
+    }
+}
+
 void read_buf()
 {
-	char *buf;
-	int i;
+// Function to read a number of bytes into a  buffer from the FIFO of the I2C controller
+//static void i2c_read(char dev_addr, char reg_addr, char *buf, unsigned short len)
 
-	/* read buffer */
-	buf = (char *)rxBuf;
-	for (i=0; i<SPIBUFSIZE; i++) {
-		*buf++ = BCM2835_SPIFIFO;
-	}
+    i2c_write(dev_addr, reg_addr, NULL, 0);
+
+    unsigned short bufidx;
+    bufidx = 0;
+
+    memset(buf, 0, len); // clear the buffer
+
+    BSC1_DLEN = len;
+    BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
+    BSC1_C = START_READ; // Start Read after clearing FIFO (see #define)
+
+    do {
+        // Wait for some data to appear in the FIFO
+        while ((BSC1_S & BSC_S_TA) && !(BSC1_S & BSC_S_RXD));
+
+        // Consume the FIFO
+        while ((BSC1_S & BSC_S_RXD) && (bufidx < len)) {
+            buf[bufidx++] = BSC1_FIFO;
+        }
+    } while ((!(BSC1_S & BSC_S_DONE)));
 }
 
 void write_buf()
 {
-	char *buf;
-	int i;
+	
+// Function to write data to an I2C device via the FIFO.  This doesn't refill the FIFO, so writes are limited to 16 bytes
+// including the register address. len specifies the number of bytes in the buffer.
+//static void i2c_write(char dev_addr, char reg_addr, char *buf, unsigned short len)
+	
+    int idx;
 
-	/* activate transfer */
-	BCM2835_SPICS = BCM_SPI_CS_TA | BCM_SPI_CS_CPHA;
+    BCM2835_BSC1_A = dev_addr;
+    BCM2835_BSC1_DLEN = len + 1; // one byte for the register address, plus the buffer length
 
-	/* send txBuf */
-	buf = (char *)txBuf;
-	for (i=0; i<SPIBUFSIZE; i++) {
-		BCM2835_SPIFIFO = *buf++;
-	}
+    BSC1_FIFO = reg_addr; // start register address
+    for (idx = 0; idx < len; idx++)
+        BSC1_FIFO = buf[idx];
 
-	/* wait until transfer is finished */
-	while (!(BCM2835_SPICS & BCM_SPI_CS_DONE));
+    BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
+    BSC1_C = START_WRITE; // Start Write (see #define)
 
-	/* deactivate transfer */
-	BCM2835_SPICS = 0;
+    wait_i2c_done();
 }
 
 int map_gpio()
@@ -167,7 +189,7 @@ int map_gpio()
 	static u32 mem1_base, mem2_base;
 
 	mem1_base = BCM2835_GPIO_BASE + BCM2709_OFFSET;
-	mem2_base = BCM2835_SPI_BASE + BCM2709_OFFSET;  // SPI na I2C
+	mem2_base = BCM2835_BSC1_BASE + BCM2709_OFFSET;
 
 	fd = open("/dev/mem", O_RDWR | O_SYNC);
 	if (fd < 0) {
@@ -213,49 +235,35 @@ int map_gpio()
  *
  *		GPIO	Dir		Signal
  *
- *		8		OUT		CE0
- *		9		IN		MISO
- *		10		OUT		MOSI
- *		11		OUT		SCLK
- *
+ *		2	IN/OUT		SDA
+ *		3	OUT		SCL
  */
 
 void setup_gpio()
 {
 	u32 x;
 
-	/* change SPI pins */
+	/* change I2C pins */
 	x = BCM2835_GPFSEL0;
-	x &= ~(0x3F000000);
-	x |= 0x24000000;
+	x &= ~(0x00000FC0);
+	x |= 0x00000900;
 	BCM2835_GPFSEL0 = x;
 
-	x = BCM2835_GPFSEL1;
-	x &= ~(0x0000003F);
-	x |= 0x00000024;
-	BCM2835_GPFSEL1 = x;
-
 	/* set up SPI */
-	BCM2835_SPICLK = BCM2835_SPICLKDIV;
+	//BCM2835_SPICLK = BCM2835_SPICLKDIV; 		tutaj mozna dodac prescaler - domyslnie 100kHz 
 
-	BCM2835_SPICS = 0;
+	//BCM2835_SPICS = 0;
 
 	/* clear FIFOs */
-	BCM2835_SPICS |= BCM_SPI_CS_CLEAR_RX | BCM_SPI_CS_CLEAR_TX;
-
+	//BCM2835_SPICS |= BCM_SPI_CS_CLEAR_RX | BCM_SPI_CS_CLEAR_TX;
 }
 
 void restore_gpio()
 {
 	u32 x;
 
-	/* change SPI pins to inputs*/
+	/* change I2C pins to inputs*/
 	x = BCM2835_GPFSEL0;
-	x &= ~(0x3F000000);
+	x &= ~(0x00000FC0);
 	BCM2835_GPFSEL0 = x;
-
-	x = BCM2835_GPFSEL1;
-	x &= ~(0x0000003F);
-	BCM2835_GPFSEL1 = x;
-
 }
