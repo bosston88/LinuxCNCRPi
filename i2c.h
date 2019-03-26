@@ -11,8 +11,6 @@
 
 /* Broadcom defines */
 
-#define BCM2835_SPICLKDIV	32		/* ~8 Mhz */
-
 #define BCM2835_PERI_BASE	0x20000000
 #define BCM2709_OFFSET		0x1F000000
 #define BCM2835_GPIO_BASE	(BCM2835_PERI_BASE + 0x200000) /* GPIO controller */
@@ -63,17 +61,5 @@
 #define BSC_S_TA	1
 
 #define CLEAR_STATUS	BSC_S_CLKT|BSC_S_ERR|BSC_S_DONE
-
-
-
-#define BCM2835_SPICS 		  *(mem2 + 0)
-#define BCM2835_SPIFIFO     *(mem2 + 1)
-#define BCM2835_SPICLK 		  *(mem2 + 2)
-
-#define BCM_SPI_CS_DONE		  0x00010000
-#define BCM_SPI_CS_TA		    0x00000080
-#define BCM_SPI_CS_CLEAR_RX	0x00000020
-#define BCM_SPI_CS_CLEAR_TX	0x00000010
-#define BCM_SPI_CS_CPHA		  0x00000004
 
 #endif
