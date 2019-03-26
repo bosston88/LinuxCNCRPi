@@ -42,6 +42,7 @@ static const char *modname = MODNAME;
 static const char *prefix = PREFIX;
 
 volatile unsigned *mem1, *mem2;
+char dev_addr=0x40;						//Device I2C address
 
 /***********************************************************************
 *                  LOCAL FUNCTION DECLARATIONS                         *
@@ -50,11 +51,12 @@ volatile unsigned *mem1, *mem2;
    everything else is just init code
 */
 static void read_i2c(void *arg, long period);
-static void read_buf();
-static void write_buf();
+static void read_buf(char reg_addr, char *buf, unsigned short len);
+static void write_buf(char reg_addr, char *buf, unsigned short len);
 static int map_gpio();
 static void setup_gpio();
 static void restore_gpio();
+static void wait_i2c_done(void);
 
 /***********************************************************************
 *                       INIT AND EXIT CODE                             *
@@ -124,44 +126,45 @@ void rtapi_app_exit(void)
 void read_i2c(void *arg, long period)
 {
 	data_t *dat = (data_t *)arg;
-	
-	*(dat->data_in) = ;
+	char buf[2];
+	read_buf(0xF3, &buf, 2);
+	*(dat->data_in) = buf[0];//wynik konwersacji
 }
 
-static void wait_i2c_done(void) {
+void wait_i2c_done(void) {
     while ((!((BCM2835_BSC1_S) & BSC_S_DONE))) {
         udelay(100);
     }
 }
 
-void read_buf()
+void read_buf(char reg_addr, char *buf, unsigned short len)
 {
 // Function to read a number of bytes into a  buffer from the FIFO of the I2C controller
 //static void i2c_read(char dev_addr, char reg_addr, char *buf, unsigned short len)
 
-    i2c_write(dev_addr, reg_addr, NULL, 0);
+    write_buf(reg_addr, NULL, 0);
 
     unsigned short bufidx;
     bufidx = 0;
 
     memset(buf, 0, len); // clear the buffer
 
-    BSC1_DLEN = len;
-    BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
-    BSC1_C = START_READ; // Start Read after clearing FIFO (see #define)
+    BCM2835_BSC1_DLEN = len;
+    BCM2835_BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
+    BCM2835_BSC1_C = START_READ; // Start Read after clearing FIFO (see #define)
 
     do {
         // Wait for some data to appear in the FIFO
-        while ((BSC1_S & BSC_S_TA) && !(BSC1_S & BSC_S_RXD));
+        while ((BCM2835_BSC1_S & BSC_S_TA) && !(BCM2835_BSC1_S & BSC_S_RXD));
 
         // Consume the FIFO
-        while ((BSC1_S & BSC_S_RXD) && (bufidx < len)) {
-            buf[bufidx++] = BSC1_FIFO;
+        while ((BCM2835_BSC1_S & BSC_S_RXD) && (bufidx < len)) {
+            buf[bufidx++] = BCM2835_BSC1_FIFO;
         }
-    } while ((!(BSC1_S & BSC_S_DONE)));
+    } while ((!(BCM2835_BSC1_S & BSC_S_DONE)));
 }
 
-void write_buf()
+void write_buf(char reg_addr, char *buf, unsigned short len)
 {
 	
 // Function to write data to an I2C device via the FIFO.  This doesn't refill the FIFO, so writes are limited to 16 bytes
@@ -173,12 +176,12 @@ void write_buf()
     BCM2835_BSC1_A = dev_addr;
     BCM2835_BSC1_DLEN = len + 1; // one byte for the register address, plus the buffer length
 
-    BSC1_FIFO = reg_addr; // start register address
+    BCM2835_BSC1_FIFO = reg_addr; // start register address
     for (idx = 0; idx < len; idx++)
-        BSC1_FIFO = buf[idx];
+        BCM2835_BSC1_FIFO = buf[idx];
 
-    BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
-    BSC1_C = START_WRITE; // Start Write (see #define)
+    BCM2835_BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
+    BCM2835_BSC1_C = START_WRITE; // Start Write (see #define)
 
     wait_i2c_done();
 }
