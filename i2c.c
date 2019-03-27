@@ -31,7 +31,7 @@ MODULE_LICENSE("GPL");
 */
 
 typedef struct {
-	hal_float_t *data_in,
+	hal_float_t *data_in;
 } data_t;
 
 /* pointer to array of data_t structs in shared memory*/
@@ -126,9 +126,9 @@ void rtapi_app_exit(void)
 void read_i2c(void *arg, long period)
 {
 	data_t *dat = (data_t *)arg;
-	char buf[2];
-	read_buf(0xF3, &buf, 2);
-	*(dat->data_in) = buf[0];//wynik konwersacji
+	char buf;
+	read_buf(0xF3, &buf, 1);
+	*(dat->data_in) = buf;//wynik konwersacji
 }
 
 void wait_i2c_done(void) {
@@ -189,7 +189,7 @@ void write_buf(char reg_addr, char *buf, unsigned short len)
 int map_gpio()
 {
 	int fd;
-	static u32 mem1_base, mem2_base;
+	static uint32_t mem1_base, mem2_base;
 
 	mem1_base = BCM2835_GPIO_BASE + BCM2709_OFFSET;
 	mem2_base = BCM2835_BSC1_BASE + BCM2709_OFFSET;
@@ -244,7 +244,7 @@ int map_gpio()
 
 void setup_gpio()
 {
-	u32 x;
+	uint32_t x;
 
 	/* change I2C pins */
 	x = BCM2835_GPFSEL0;
@@ -263,7 +263,7 @@ void setup_gpio()
 
 void restore_gpio()
 {
-	u32 x;
+	uint32_t x;
 
 	/* change I2C pins to inputs*/
 	x = BCM2835_GPFSEL0;
