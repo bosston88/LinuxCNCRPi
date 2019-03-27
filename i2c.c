@@ -241,12 +241,12 @@ int map_gpio()
 
 int setup_gpiomem_access(void)
 {
-  if ((mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC)) < 0) {
+  if ((int mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC)) < 0) {
     rtapi_print_msg(RTAPI_MSG_ERR,"HAL_GPIO: can't open /dev/gpiomem:  %d - %s", errno, strerror(errno));
     return -1;
   }
 
-  mem1 = mmap(NULL, BCM2835_BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, mem_fd, 0);
+  mem1 = mmap(NULL, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, mem_fd, 0);
 
   if (mem1 == MAP_FAILED) {
     close(mem_fd);
