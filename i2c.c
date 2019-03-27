@@ -83,19 +83,22 @@ int rtapi_app_main(void)
 	}
 	
 	/* configure board */
-	retval = setup_gpiomem_access();
+	/*retval = setup_gpiomem_access();
 	if (retval < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: cannot map GPIO MEM memory\n", modname);
 		return retval;
 	}
+	else rtapi_print_msg(RTAPI_MSG_INFO, "%s: GPIO MEM mapped\n", modname);*/
 	
 	retval = map_gpio();
 	if (retval < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: cannot map GPIO memory\n", modname);
 		return retval;
 	}
+	else rtapi_print_msg(RTAPI_MSG_INFO, "%s: GPIO mapped\n", modname);
 
 	setup_gpio();
+	rtapi_print_msg(RTAPI_MSG_INFO, "%s: GPIO set up\n", modname);
 	
 	/* export the pin(s) */
 	retval = hal_pin_float_newf(HAL_OUT, &(data->data_in), comp_id, "%s.in.adc", prefix);
@@ -105,6 +108,7 @@ int rtapi_app_main(void)
 		return -1;
     }
 	*(data->data_in) = 0;
+	rtapi_print_msg(RTAPI_MSG_INFO, "%s: Pin created\n", modname);
 	
 	/* export functions */
 	rtapi_snprintf(name, sizeof(name), "%s.read", prefix);
@@ -115,6 +119,7 @@ int rtapi_app_main(void)
 		hal_exit(comp_id);
 		return -1;
 	}
+	rtapi_print_msg(RTAPI_MSG_INFO, "%s: Read exported\n", modname);
 	
 	/* ready */
 	rtapi_print_msg(RTAPI_MSG_INFO, "%s: installed driver\n", modname);
