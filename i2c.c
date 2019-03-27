@@ -11,9 +11,9 @@
 
 #include "i2c.h"
 
-#if !defined(BUILD_SYS_USER_DSO)
-#error "This driver is for usermode threads only"
-#endif
+//#if !defined(BUILD_SYS_USER_DSO)
+//#error "This driver is for usermode threads only"
+//#endif
 
 #define MODNAME "I2C"
 #define PREFIX "I2C"
@@ -57,6 +57,7 @@ static int map_gpio();
 static void setup_gpio();
 static void restore_gpio();
 static void wait_i2c_done(void);
+static int setup_gpiomem_access(void);
 
 /***********************************************************************
 *                       INIT AND EXIT CODE                             *
@@ -82,6 +83,12 @@ int rtapi_app_main(void)
 	}
 	
 	/* configure board */
+	retval = setup_gpiomem_access();
+	if (retval < 0) {
+		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: cannot map GPIO memory\n", modname);
+		return retval;
+	}
+	
 	retval = map_gpio();
 	if (retval < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: cannot map GPIO memory\n", modname);
@@ -91,7 +98,7 @@ int rtapi_app_main(void)
 	setup_gpio();
 	
 	/* export the pin(s) */
-	retval = hal_pin_bit_newf(HAL_OUT, &(data->data_in), comp_id, "%s.in.adc", prefix);
+	retval = hal_pin_float_newf(HAL_OUT, &(data->data_in), comp_id, "%s.in.adc", prefix);
 	if (retval < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: pin export failed with err=%i\n", modname, retval);
 		hal_exit(comp_id);
@@ -230,6 +237,25 @@ int map_gpio()
 	}
 
 	return 0;
+}
+
+int setup_gpiomem_access(void)
+{
+  if ((mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC)) < 0) {
+    rtapi_print_msg(RTAPI_MSG_ERR,"HAL_GPIO: can't open /dev/gpiomem:  %d - %s", errno, strerror(errno));
+    return -1;
+  }
+
+  mem1 = mmap(NULL, BCM2835_BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, mem_fd, 0);
+
+  if (mem1 == MAP_FAILED) {
+    close(mem_fd);
+    mem_fd = -1;
+    rtapi_print_msg(RTAPI_MSG_ERR, "HAL_GPIO: mmap failed: %d - %s\n", errno, strerror(errno));
+    return -1;
+  }
+
+  return 0;
 }
 	
 /*    	GPIO USAGE
