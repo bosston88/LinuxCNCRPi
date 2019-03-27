@@ -200,8 +200,11 @@ int map_gpio()
 
 	mem1_base = BCM2835_GPIO_BASE + BCM2709_OFFSET;
 	mem2_base = BCM2835_BSC1_BASE + BCM2709_OFFSET;
-
+seteuid(0);
+setfsuid(geteuid());
 	fd = open("/dev/mem", O_RDWR|O_SYNC);
+setfsuid(getuid());
+	
 	if (fd < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR,"%s: can't open /dev/mem \n",modname);
 		return -1;
