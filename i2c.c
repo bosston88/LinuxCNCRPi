@@ -85,7 +85,7 @@ int rtapi_app_main(void)
 	/* configure board */
 	retval = setup_gpiomem_access();
 	if (retval < 0) {
-		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: cannot map GPIO memory\n", modname);
+		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: cannot map GPIO MEM memory\n", modname);
 		return retval;
 	}
 	
@@ -140,7 +140,7 @@ void read_i2c(void *arg, long period)
 
 void wait_i2c_done(void) {
     while ((!((BCM2835_BSC1_S) & BSC_S_DONE))) {
-        udelay(100);
+       // udelay(100);
     }
 }
 
@@ -201,7 +201,7 @@ int map_gpio()
 	mem1_base = BCM2835_GPIO_BASE + BCM2709_OFFSET;
 	mem2_base = BCM2835_BSC1_BASE + BCM2709_OFFSET;
 
-	fd = open("/dev/mem", O_RDWR | O_SYNC);
+	fd = open("/dev/mem", O_RDWR|O_SYNC);
 	if (fd < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR,"%s: can't open /dev/mem \n",modname);
 		return -1;
@@ -241,7 +241,8 @@ int map_gpio()
 
 int setup_gpiomem_access(void)
 {
-  if ((int mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC)) < 0) {
+int mem_fd;
+  if ((mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC)) < 0) {
     rtapi_print_msg(RTAPI_MSG_ERR,"HAL_GPIO: can't open /dev/gpiomem:  %d - %s", errno, strerror(errno));
     return -1;
   }
