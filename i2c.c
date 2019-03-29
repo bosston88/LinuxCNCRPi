@@ -66,6 +66,7 @@ int rtapi_app_main(void)
 {
 	char name[HAL_NAME_LEN + 1];
 	int n, retval;
+	n=0;
 	
 	 /* initialise the driver */
     comp_id = hal_init(modname);
@@ -101,13 +102,13 @@ int rtapi_app_main(void)
 	rtapi_print_msg(RTAPI_MSG_INFO, "%s: GPIO set up\n", modname);
 	
 	/* export the pin(s) */
-	retval = hal_pin_float_newf(HAL_OUT, &(data->data_in), comp_id, "%s.in.adc", prefix);
+	retval = hal_pin_float_newf(HAL_OUT, &(data->data_in), comp_id, "%s.in.adc", prefix, n); //dodane n
 	if (retval < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: pin export failed with err=%i\n", modname, retval);
 		hal_exit(comp_id);
 		return -1;
     }
-	*(data->data_in) = 0;
+	*(data->data_in) = 0.0;
 	rtapi_print_msg(RTAPI_MSG_INFO, "%s: Pin created\n", modname);
 	
 	/* export functions */
