@@ -10,27 +10,21 @@
 volatile unsigned *mem1, *mem2;
 char dev_addr=0x40;						//Device I2C address
 
-static void read_i2c(void *arg, long period);
 static void read_buf(char reg_addr, char *buf, unsigned short len);
 static void write_buf(char reg_addr, char *buf, unsigned short len);
 static int map_gpio();
 static void setup_gpio();
 static void restore_gpio();
 static void wait_i2c_done(void);
-static int setup_gpiomem_access(void);
 
 int main()
 {
-
-
-}
-
-void read_i2c(void *arg, long period)
-{
-	data_t *dat = (data_t *)arg;
 	char buf;
+	map_gpio();
+	setup_gpio();
 	read_buf(0xF3, &buf, 1);
-	*(dat->data_in) = buf;//wynik konwersacji
+	printf("%d", buf);
+	restore_gpio();
 }
 
 void wait_i2c_done(void) {
@@ -101,7 +95,7 @@ setfsuid(geteuid());
 setfsuid(getuid());
 	
 	if (fd < 0) {
-		rtapi_print_msg(RTAPI_MSG_ERR,"%s: can't open /dev/mem \n",modname);
+		printf("Can't open /dev/mem \n");
 		return -1;
 	}
 
@@ -114,7 +108,7 @@ setfsuid(getuid());
 	        mem1_base);
 
 	if (mem1 == MAP_FAILED) {
-		rtapi_print_msg(RTAPI_MSG_ERR,"%s: can't map mem1\n",modname);
+		printf("Can't map mem1\n");
 		close(fd);
 		return -1;
 	}
@@ -130,7 +124,7 @@ setfsuid(getuid());
 	close(fd);
 
 	if (mem2 == MAP_FAILED) {
-		rtapi_print_msg(RTAPI_MSG_ERR,"%s: can't map mem2\n",modname);
+		printf("Can't map mem2\n");
 		return -1;
 	}
 
