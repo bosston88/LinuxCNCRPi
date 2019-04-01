@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "i2c.h"
+#include "test.h"
 
 volatile unsigned *mem1, *mem2;
 char dev_addr=0x40;						//Device I2C address
