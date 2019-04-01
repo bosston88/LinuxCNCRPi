@@ -1,0 +1,13 @@
+<pyvcp>
+<scale>
+    <font>("Helvetica",16)</font>
+    <width>"25"</width>
+    <halpin>"scale"</halpin>
+    <resolution>0.1</resolution>
+    <orient>HORIZONTAL</orient>
+    <initval>1</initval>
+    <min_>-1</min_>
+    <max_>1</max_>
+    <param_pin>1</param_pin>
+</scale>
+</pyvcp>
