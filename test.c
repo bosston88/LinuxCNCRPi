@@ -20,6 +20,7 @@ static void wait_i2c_done(void);
 
 int main()
 {
+	printf("Start\n");
 	char buf;
 	map_gpio();
 	setup_gpio();
@@ -29,9 +30,11 @@ int main()
 }
 
 void wait_i2c_done(void) {
+	printf("Wait for i2c\n");
     while ((!((BCM2835_BSC1_S) & BSC_S_DONE))) {
-       // udelay(100);
+        udelay(100);
     }
+	printf("i2c done\n");
 }
 
 void read_buf(char reg_addr, char *buf, unsigned short len)
