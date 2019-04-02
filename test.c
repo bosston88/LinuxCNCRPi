@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
 
 #include "test.h"
 
@@ -23,7 +24,7 @@ int main()
 	map_gpio();
 	setup_gpio();
 	read_buf(0xF3, &buf, 1);
-	printf("%d", buf);
+	printf("%d \n", buf);
 	restore_gpio();
 }
 
@@ -37,9 +38,9 @@ void read_buf(char reg_addr, char *buf, unsigned short len)
 {
 // Function to read a number of bytes into a  buffer from the FIFO of the I2C controller
 //static void i2c_read(char dev_addr, char reg_addr, char *buf, unsigned short len)
-
+	printf("Write to buf\n");
     write_buf(reg_addr, NULL, 0);
-
+	printf("Wrote to buf\n");
     unsigned short bufidx;
     bufidx = 0;
 
@@ -58,6 +59,7 @@ void read_buf(char reg_addr, char *buf, unsigned short len)
             buf[bufidx++] = BCM2835_BSC1_FIFO;
         }
     } while ((!(BCM2835_BSC1_S & BSC_S_DONE)));
+	printf("Read from buf\n");
 }
 
 void write_buf(char reg_addr, char *buf, unsigned short len)
@@ -98,7 +100,8 @@ setfsuid(getuid());
 		printf("Can't open /dev/mem \n");
 		return -1;
 	}
-
+	printf("Opened /dev/mem \n");
+	
 	mem1 = mmap(
 	        NULL,
 	        BLOCK_SIZE,
@@ -112,6 +115,7 @@ setfsuid(getuid());
 		close(fd);
 		return -1;
 	}
+	printf("Mapped mem1\n");
 
 	mem2 = mmap(
 	        NULL,
@@ -127,6 +131,7 @@ setfsuid(getuid());
 		printf("Can't map mem2\n");
 		return -1;
 	}
+	printf("Mapped mem2\n");
 
 	return 0;
 }
@@ -140,6 +145,7 @@ void setup_gpio()
 	x &= ~(0x00000FC0);
 	x |= 0x00000900;
 	BCM2835_GPFSEL0 = x;
+	printf("GPIO set up\n");
 }
 
 void restore_gpio()
@@ -150,4 +156,5 @@ void restore_gpio()
 	x = BCM2835_GPFSEL0;
 	x &= ~(0x00000FC0);
 	BCM2835_GPFSEL0 = x;
+	printf("GPIO restored\n");
 }
