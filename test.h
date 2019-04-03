@@ -14,7 +14,7 @@
 #define PERI_BASE	0x20000000
 #define BCM2709_OFFSET		0x1F000000
 #define GPIO_BASE	(PERI_BASE + 0x200000) /* GPIO controller */
-#define BSC1_BASE	(PERI_BASE + 0x204000) /* I2C controller / change from 804000 to 204000*/
+#define BSC1_BASE	(PERI_BASE + 0x804000) /* I2C controller */
 
 #define GPFSEL0		  *(mem1)
 #define GPFSEL1		  *(mem1 + 1)
