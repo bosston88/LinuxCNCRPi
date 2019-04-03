@@ -7,6 +7,7 @@
 #include <inttypes.h>
 
 #include "test.h"
+#include <bcm2835.h>
 
 volatile unsigned *mem1, *mem2;
 char dev_addr=0x40;						//Device I2C address
@@ -20,12 +21,17 @@ static void wait_i2c_done(void);
 
 int main()
 {
+	uint8_t data;
 	printf("Start\n");
 	char buf;
 	map_gpio();
 	setup_gpio();
-	read_buf(0xF3, &buf, 1);
-	printf("%d \n", buf);
+	//read_buf(0xF3, &buf, 1);
+	bcm2835_i2c_setSlaveAddress(dev_addr);
+   	bcm2835_i2c_setClockDivider(2500);
+	data = bcm2835_i2c_write(0xF3, 1);
+        printf("Write Result = %d\n", data);
+	//printf("%d \n", buf);
 	restore_gpio();
 }
 
