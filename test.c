@@ -37,7 +37,7 @@ int main()
 
 void wait_i2c_done(void) {
 	printf("Wait for i2c\n");
-    while ((!((BCM2835_BSC1_S) & BSC_S_DONE))) {
+    while ((!((BSC1_S) & BSC_S_DONE))) {
         udelay(100);
     }
 	printf("i2c done\n");
@@ -55,19 +55,19 @@ void read_buf(char reg_addr, char *buf, unsigned short len)
 
     memset(buf, 0, len); // clear the buffer
 
-    BCM2835_BSC1_DLEN = len;
-    BCM2835_BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
-    BCM2835_BSC1_C = START_READ; // Start Read after clearing FIFO (see #define)
+    BSC1_DLEN = len;
+    BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
+    BSC1_C = START_READ; // Start Read after clearing FIFO (see #define)
 
     do {
         // Wait for some data to appear in the FIFO
-        while ((BCM2835_BSC1_S & BSC_S_TA) && !(BCM2835_BSC1_S & BSC_S_RXD));
+        while ((BSC1_S & BSC_S_TA) && !(BSC1_S & BSC_S_RXD));
 
         // Consume the FIFO
-        while ((BCM2835_BSC1_S & BSC_S_RXD) && (bufidx < len)) {
-            buf[bufidx++] = BCM2835_BSC1_FIFO;
+        while ((BSC1_S & BSC_S_RXD) && (bufidx < len)) {
+            buf[bufidx++] = BSC1_FIFO;
         }
-    } while ((!(BCM2835_BSC1_S & BSC_S_DONE)));
+    } while ((!(BSC1_S & BSC_S_DONE)));
 	printf("Read from buf\n");
 }
 
@@ -80,15 +80,15 @@ void write_buf(char reg_addr, char *buf, unsigned short len)
 	
     int idx;
 
-    BCM2835_BSC1_A = dev_addr;
-    BCM2835_BSC1_DLEN = len + 1; // one byte for the register address, plus the buffer length
+    BSC1_A = dev_addr;
+    BSC1_DLEN = len + 1; // one byte for the register address, plus the buffer length
 
-    BCM2835_BSC1_FIFO = reg_addr; // start register address
+    BSC1_FIFO = reg_addr; // start register address
     for (idx = 0; idx < len; idx++)
-        BCM2835_BSC1_FIFO = buf[idx];
+        BSC1_FIFO = buf[idx];
 
-    BCM2835_BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
-    BCM2835_BSC1_C = START_WRITE; // Start Write (see #define)
+    BSC1_S = CLEAR_STATUS; // Reset status bits (see #define)
+    BSC1_C = START_WRITE; // Start Write (see #define)
 
     wait_i2c_done();
 }
@@ -98,8 +98,8 @@ int map_gpio()
 	int fd;
 	static uint32_t mem1_base, mem2_base;
 
-	mem1_base = BCM2835_GPIO_BASE + BCM2709_OFFSET;
-	mem2_base = BCM2835_BSC1_BASE + BCM2709_OFFSET;
+	mem1_base = GPIO_BASE + BCM2709_OFFSET;
+	mem2_base = BSC1_BASE + BCM2709_OFFSET;
 seteuid(0);
 setfsuid(geteuid());
 	fd = open("/dev/mem", O_RDWR|O_SYNC);
@@ -150,10 +150,10 @@ void setup_gpio()
 	uint32_t x;
 
 	/* change I2C pins */
-	x = BCM2835_GPFSEL0;
+	x = GPFSEL0;
 	x &= ~(0x00000FC0);
 	x |= 0x00000900;
-	BCM2835_GPFSEL0 = x;
+	GPFSEL0 = x;
 	printf("GPIO set up\n");
 }
 
@@ -162,8 +162,8 @@ void restore_gpio()
 	uint32_t x;
 
 	/* change I2C pins to inputs*/
-	x = BCM2835_GPFSEL0;
+	x = GPFSEL0;
 	x &= ~(0x00000FC0);
-	BCM2835_GPFSEL0 = x;
+	GPFSEL0 = x;
 	printf("GPIO restored\n");
 }
