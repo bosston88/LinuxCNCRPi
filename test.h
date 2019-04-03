@@ -11,32 +11,32 @@
 
 /* Broadcom defines */
 
-#define BCM2835_PERI_BASE	0x20000000
+#define PERI_BASE	0x20000000
 #define BCM2709_OFFSET		0x1F000000
-#define BCM2835_GPIO_BASE	(BCM2835_PERI_BASE + 0x200000) /* GPIO controller */
-#define BCM2835_BSC1_BASE	(BCM2835_PERI_BASE + 0x204000) /* I2C controller / change from 804000 to 204000*/
+#define GPIO_BASE	(PERI_BASE + 0x200000) /* GPIO controller */
+#define BSC1_BASE	(PERI_BASE + 0x204000) /* I2C controller / change from 804000 to 204000*/
 
-#define BCM2835_GPFSEL0		  *(mem1)
-#define BCM2835_GPFSEL1		  *(mem1 + 1)
-#define BCM2835_GPFSEL2		  *(mem1 + 2)
-#define BCM2835_GPFSEL3		  *(mem1 + 3)
-#define BCM2835_GPFSEL4		  *(mem1 + 4)
-#define BCM2835_GPFSEL5		  *(mem1 + 5)
-#define BCM2835_GPSET0		  *(mem1 + 7)
-#define BCM2835_GPSET1		  *(mem1 + 8)
-#define BCM2835_GPCLR0		  *(mem1 + 10)
-#define BCM2835_GPCLR1		  *(mem1 + 11)
-#define BCM2835_GPLEV0		  *(mem1 + 13)
-#define BCM2835_GPLEV1		  *(mem1 + 14)
+#define GPFSEL0		  *(mem1)
+#define GPFSEL1		  *(mem1 + 1)
+#define GPFSEL2		  *(mem1 + 2)
+#define GPFSEL3		  *(mem1 + 3)
+#define GPFSEL4		  *(mem1 + 4)
+#define GPFSEL5		  *(mem1 + 5)
+#define GPSET0		  *(mem1 + 7)
+#define GPSET1		  *(mem1 + 8)
+#define GPCLR0		  *(mem1 + 10)
+#define GPCLR1		  *(mem1 + 11)
+#define GPLEV0		  *(mem1 + 13)
+#define GPLEV1		  *(mem1 + 14)
 
-#define BCM2835_BSC1_C 		  *(mem2 + 0)
-#define BCM2835_BSC1_S      *(mem2 + 1)
-#define BCM2835_BSC1_DLEN 	*(mem2 + 2)
-#define BCM2835_BSC1_A      *(mem2 + 3)
-#define BCM2835_BSC1_FIFO 	*(mem2 + 4)
-#define BCM2835_BSC1_DIV 	  *(mem2 + 5)
-#define BCM2835_BSC1_DEL    *(mem2 + 6)
-#define BCM2835_BSC1_CLKT 	*(mem2 + 7)
+#define BSC1_C 		  *(mem2 + 0)
+#define BSC1_S      *(mem2 + 1)
+#define BSC1_DLEN 	*(mem2 + 2)
+#define BSC1_A      *(mem2 + 3)
+#define BSC1_FIFO 	*(mem2 + 4)
+#define BSC1_DIV 	  *(mem2 + 5)
+#define BSC1_DEL    *(mem2 + 6)
+#define BSC1_CLKT 	*(mem2 + 7)
 
 #define BSC_C_I2CEN	(1 << 15)
 #define BSC_C_INTR	(1 << 10)
