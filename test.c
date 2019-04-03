@@ -18,6 +18,7 @@ static int map_gpio();
 static void setup_gpio();
 static void restore_gpio();
 static void wait_i2c_done(void);
+static void test_gpio();
 
 int main()
 {
@@ -25,12 +26,13 @@ int main()
 	printf("Start\n");
 	char buf;
 	map_gpio();
-	setup_gpio();
+	test_gpio();
+	//setup_gpio();
 	//read_buf(0xF3, &buf, 1);
-	bcm2835_i2c_setSlaveAddress(dev_addr);
-   	bcm2835_i2c_setClockDivider(2500);
-	data = bcm2835_i2c_write(0xF3, 1);
-        printf("Write Result = %d\n", data);
+	//bcm2835_i2c_setSlaveAddress(dev_addr);
+   	//bcm2835_i2c_setClockDivider(2500);
+	//data = bcm2835_i2c_write(0xF3, 1);
+        //printf("Write Result = %d\n", data);
 	//printf("%d \n", buf);
 	restore_gpio();
 }
@@ -38,7 +40,7 @@ int main()
 void wait_i2c_done(void) {
 	printf("Wait for i2c\n");
     while ((!((BSC1_S) & BSC_S_DONE))) {
-        udelay(100);
+        //udelay(100);
     }
 	printf("i2c done\n");
 }
@@ -155,6 +157,26 @@ void setup_gpio()
 	x |= 0x00000900;
 	GPFSEL0 = x;
 	printf("GPIO set up\n");
+}
+
+void test_gpio()
+{
+	uint32_t x;
+
+	/* change I2C pins to outputs*/
+	x = GPFSEL0;
+	x &= ~(0x00000FC0);
+	x |= 0x00000048;
+	GPFSEL0 = x;
+	printf("GPIO set up OUTPUT\n");
+	
+	//x = GPSET0;
+	//x &= ~(0x0000000C);
+	x |= 0x0000000C;
+	GPSET0 = x;
+	printf("GPIO 2,3 set high\n");
+	GPCLR0 = x;
+	printf("GPIO 2,3 set low\n");
 }
 
 void restore_gpio()
