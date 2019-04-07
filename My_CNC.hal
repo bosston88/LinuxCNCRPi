@@ -7,6 +7,7 @@ loadrt [KINS]KINEMATICS
 
 # motion controller, get name and thread periods from ini file
 loadrt [EMCMOT]EMCMOT base_period_nsec=[EMCMOT]BASE_PERIOD servo_period_nsec=[EMCMOT]SERVO_PERIOD num_joints=[KINS]JOINTS
+loadrt threads name3=temp1 period3=100000000
 
 #Charge-pump - creates signal which can serve as watchdog in external hardware (connected to power relay)
 #loadrt charge_pump
@@ -85,3 +86,6 @@ net yenable axis.1.amp-enable-out => stepgen.1.enable
 
 net estop-out <= iocontrol.0.user-enable-out
 net estop-out => iocontrol.0.emc-enable-in
+
+loadrt i2c
+addf i2c.read temp1
