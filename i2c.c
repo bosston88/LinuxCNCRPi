@@ -15,8 +15,8 @@
 //#error "This driver is for usermode threads only"
 //#endif
 
-#define MODNAME "I2C"
-#define PREFIX "I2C"
+#define MODNAME "i2c"
+#define PREFIX "i2c"
 
 MODULE_AUTHOR("Bosston88");
 MODULE_DESCRIPTION("Driver for ADC I2C");
@@ -68,12 +68,12 @@ int rtapi_app_main(void)
 	int n, retval;
 	n=0;
 	
-	 /* initialise the driver */
-    comp_id = hal_init(modname);
-    if (comp_id < 0) {
+	/* initialise the driver */
+   	comp_id = hal_init(modname);
+    	if (comp_id < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: hal_init() failed\n", modname);
 		return -1;
-    }
+    	}
 	
 	/* allocate shared memory */
 	data = hal_malloc(sizeof(data_t));
@@ -82,14 +82,6 @@ int rtapi_app_main(void)
 		hal_exit(comp_id);
 		return -1;
 	}
-	
-	/* configure board */
-	/*retval = setup_gpiomem_access();
-	if (retval < 0) {
-		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: cannot map GPIO MEM memory\n", modname);
-		return retval;
-	}
-	else rtapi_print_msg(RTAPI_MSG_INFO, "%s: GPIO MEM mapped\n", modname);*/
 	
 	retval = map_gpio();
 	if (retval < 0) {
@@ -107,7 +99,7 @@ int rtapi_app_main(void)
 		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: pin export failed with err=%i\n", modname, retval);
 		hal_exit(comp_id);
 		return -1;
-    }
+    	}
 	*(data->data_in) = 0.0;
 	rtapi_print_msg(RTAPI_MSG_INFO, "%s: Pin created\n", modname);
 	
@@ -121,6 +113,8 @@ int rtapi_app_main(void)
 		return -1;
 	}
 	rtapi_print_msg(RTAPI_MSG_INFO, "%s: Read exported\n", modname);
+	
+	write_buf(0xF3, NULL, 0);
 	
 	/* ready */
 	rtapi_print_msg(RTAPI_MSG_INFO, "%s: installed driver\n", modname);
@@ -139,9 +133,12 @@ void rtapi_app_exit(void)
 void read_i2c(void *arg, long period)
 {
 	data_t *dat = (data_t *)arg;
-	char buf;
-	read_buf(0xF3, &buf, 1);
-	*(dat->data_in) = buf;//wynik konwersacji
+	char buf[2];
+	float out;
+	read_buf(NULL, &buf, 2);
+	out=buf[0]+buf[1];
+	write_buf(0xF3, NULL, 0);
+	*(dat->data_in) = out;//wynik konwersacji
 }
 
 void wait_i2c_done(void) {
@@ -155,7 +152,8 @@ void read_buf(char reg_addr, char *buf, unsigned short len)
 // Function to read a number of bytes into a  buffer from the FIFO of the I2C controller
 //static void i2c_read(char dev_addr, char reg_addr, char *buf, unsigned short len)
 
-    write_buf(reg_addr, NULL, 0);
+    if(reg_addr==NULL) BCM2835_BSC1_A = dev_addr;
+    else write_buf(reg_addr, NULL, 0);
 
     unsigned short bufidx;
     bufidx = 0;
@@ -206,10 +204,11 @@ int map_gpio()
 
 	mem1_base = BCM2835_GPIO_BASE + BCM2709_OFFSET;
 	mem2_base = BCM2835_BSC1_BASE + BCM2709_OFFSET;
-seteuid(0);
-setfsuid(geteuid());
+	
+	seteuid(0);
+	setfsuid(geteuid());
 	fd = open("/dev/mem", O_RDWR|O_SYNC);
-setfsuid(getuid());
+	setfsuid(getuid());
 	
 	if (fd < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR,"%s: can't open /dev/mem \n",modname);
@@ -246,26 +245,6 @@ setfsuid(getuid());
 	}
 
 	return 0;
-}
-
-int setup_gpiomem_access(void)
-{
-int mem_fd;
-  if ((mem_fd = open("/dev/gpiomem", O_RDWR|O_SYNC)) < 0) {
-    rtapi_print_msg(RTAPI_MSG_ERR,"HAL_GPIO: can't open /dev/gpiomem:  %d - %s", errno, strerror(errno));
-    return -1;
-  }
-
-  mem1 = mmap(NULL, BLOCK_SIZE, PROT_READ|PROT_WRITE, MAP_SHARED, mem_fd, 0);
-
-  if (mem1 == MAP_FAILED) {
-    close(mem_fd);
-    mem_fd = -1;
-    rtapi_print_msg(RTAPI_MSG_ERR, "HAL_GPIO: mmap failed: %d - %s\n", errno, strerror(errno));
-    return -1;
-  }
-
-  return 0;
 }
 	
 /*    	GPIO USAGE
