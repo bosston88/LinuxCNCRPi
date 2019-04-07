@@ -136,7 +136,7 @@ void read_i2c(void *arg, long period)
 	char buf[2];
 	uint16_t out;
 	
-	read_buf(NULL, buf, 2);
+	read_buf(0, buf, 2);
 	out=buf[0]<< 8 | buf[1];      
 
       	float temperature = out;
@@ -160,7 +160,7 @@ void read_buf(char reg_addr, char *buf, unsigned short len)
 // Function to read a number of bytes into a  buffer from the FIFO of the I2C controller
 //static void i2c_read(char dev_addr, char reg_addr, char *buf, unsigned short len)
 
-    if(reg_addr==NULL) BCM2835_BSC1_A = dev_addr;
+    if(reg_addr==0) BCM2835_BSC1_A = dev_addr;
     else write_buf(reg_addr, NULL, 0);
 
     unsigned short bufidx;
