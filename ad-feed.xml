@@ -10,4 +10,27 @@
     <max_>1</max_>
     <param_pin>1</param_pin>
 </scale>
+<dial>
+    <size>200</size>
+    <cpr>150</cpr>
+    <min_>0</min_>
+    <max_>150</max_>
+    <text>"Set Vgap"</text>
+    <initval>50</initval>
+    <resolution>1</resolution>
+    <halpin>"setvgap"</halpin>
+    <dialcolor>"yellow"</dialcolor>
+    <edgecolor>"green"</edgecolor>
+    <dotcolor>"black"</dotcolor>
+    <param_pin>1</param_pin>
+</dial>
+<label>
+    <text>"Vgap:"</text>
+    <font>("Helvetica",20)</font>
+</label>
+<number>
+    <halpin>"vgap"</halpin>
+    <font>("Helvetica",20)</font>
+    <format>"3.1f"</format>
+</number>
 </pyvcp>
