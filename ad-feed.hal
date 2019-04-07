@@ -1,1 +1,2 @@
 net mysig motion.adaptive-feed <= pyvcp.scale-f
+net tempsig i2c.in.adc => pyvcp.temperature
