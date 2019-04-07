@@ -134,11 +134,19 @@ void read_i2c(void *arg, long period)
 {
 	data_t *dat = (data_t *)arg;
 	char buf[2];
-	float out;
-	read_buf(NULL, &buf, 2);
-	out=buf[0]+buf[1];
+	uint16_t out;
+	
+	read_buf(NULL, buf, 2);
+	out=buf[0]<< 8 | buf[1];      
+
+      	float temperature = out;
+      	temperature *= 175.72;
+      	temperature /= 65536;
+      	temperature -= 46.85;
+	
 	write_buf(0xF3, NULL, 0);
-	*(dat->data_in) = out;//wynik konwersacji
+	
+	*(dat->data_in) = temperature;//wynik konwersacji
 }
 
 void wait_i2c_done(void) {
