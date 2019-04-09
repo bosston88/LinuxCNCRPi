@@ -1,10 +1,7 @@
-#ifndef I2C_H
-#define I2C_H
+#ifndef SI7021_H
+#define SI7021_H
 
 #define REQ_TIMEOUT		10000ul
-
-#define SPIBUFSIZE		20		/* SPI buffer size */
-#define BUFSIZE			(SPIBUFSIZE/4)
 
 #define PAGE_SIZE		(4*1024)
 #define BLOCK_SIZE		(4*1024)
