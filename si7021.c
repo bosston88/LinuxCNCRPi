@@ -9,17 +9,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "i2c.h"
+#include "si7021.h"
 
 //#if !defined(BUILD_SYS_USER_DSO)
 //#error "This driver is for usermode threads only"
 //#endif
 
-#define MODNAME "i2c"
-#define PREFIX "i2c"
+#define MODNAME "si7021"
+#define PREFIX "si7021"
 
 MODULE_AUTHOR("Bosston88");
-MODULE_DESCRIPTION("Driver for ADC I2C");
+MODULE_DESCRIPTION("Driver for Si7021 I2C");
 MODULE_LICENSE("GPL");
 
 /***********************************************************************
@@ -94,7 +94,7 @@ int rtapi_app_main(void)
 	rtapi_print_msg(RTAPI_MSG_INFO, "%s: GPIO set up\n", modname);
 	
 	/* export the pin(s) */
-	retval = hal_pin_float_newf(HAL_OUT, &(data->data_in), comp_id, "%s.in.adc", prefix, n); //dodane n
+	retval = hal_pin_float_newf(HAL_OUT, &(data->data_in), comp_id, "%s.temp.in", prefix, n); //dodane n
 	if (retval < 0) {
 		rtapi_print_msg(RTAPI_MSG_ERR, "%s: ERROR: pin export failed with err=%i\n", modname, retval);
 		hal_exit(comp_id);
