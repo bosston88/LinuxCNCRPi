@@ -87,5 +87,5 @@ net yenable axis.1.amp-enable-out => stepgen.1.enable
 net estop-out <= iocontrol.0.user-enable-out
 net estop-out => iocontrol.0.emc-enable-in
 
-loadrt i2c
-addf i2c.read temp1
+loadrt si7021
+addf si7021.read temp1
