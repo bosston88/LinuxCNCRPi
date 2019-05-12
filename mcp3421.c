@@ -137,6 +137,7 @@ void read_i2c(void *arg, long period)
 	uint16_t out;
 	
 	read_buf(0, buf, 2);
+	buf[0] &= 0x3F; //odrzucenie 2 bitow - 14 bit wynik
 	out=buf[0]<< 8 | buf[1];      
 
       	float voltage = out;
