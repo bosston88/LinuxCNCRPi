@@ -42,7 +42,7 @@ static const char *modname = MODNAME;
 static const char *prefix = PREFIX;
 
 volatile unsigned *mem1, *mem2;
-char dev_addr=0x40;						//Device I2C address
+char dev_addr=0x68;						//Device I2C address
 
 /***********************************************************************
 *                  LOCAL FUNCTION DECLARATIONS                         *
@@ -114,7 +114,7 @@ int rtapi_app_main(void)
 	}
 	rtapi_print_msg(RTAPI_MSG_INFO, "%s: Read exported\n", modname);
 	
-	write_buf(0xF3, NULL, 0);
+	write_buf(0x14, NULL, 0); //Cont. conversion, 60SPS, 14bits
 	
 	/* ready */
 	rtapi_print_msg(RTAPI_MSG_INFO, "%s: installed driver\n", modname);
@@ -139,14 +139,11 @@ void read_i2c(void *arg, long period)
 	read_buf(0, buf, 2);
 	out=buf[0]<< 8 | buf[1];      
 
-      	float temperature = out;
-      	temperature *= 175.72;
-      	temperature /= 65536;
-      	temperature -= 46.85;
+      	float voltage = out;
+      	voltage /= 8192;
+      	voltage *= 2.048;
 	
-	write_buf(0xF3, NULL, 0);
-	
-	*(dat->data_in) = temperature;//wynik konwersacji
+	*(dat->data_in) = voltage;//wynik konwersacji
 }
 
 void wait_i2c_done(void) {
