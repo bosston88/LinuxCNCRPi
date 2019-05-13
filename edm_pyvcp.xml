@@ -52,11 +52,53 @@
         <label>
             <text>"PID parameters for adaptive feed"</text>
         </label>
+        <dial>
+            <size>200</size>
+            <cpr>100</cpr>
+            <min_>0</min_>
+            <max_>1000</max_>
+            <text>"P"</text>
+            <initval>0</initval>
+            <resolution>0.1</resolution>
+            <halpin>"ppart"</halpin>
+            <dialcolor>"yellow"</dialcolor>
+            <edgecolor>"green"</edgecolor>
+            <dotcolor>"black"</dotcolor>
+            <param_pin>1</param_pin>
+        </dial>
+        <dial>
+            <size>200</size>
+            <cpr>100</cpr>
+            <min_>0</min_>
+            <max_>1000</max_>
+            <text>"I"</text>
+            <initval>0</initval>
+            <resolution>0.1</resolution>
+            <halpin>"ipart"</halpin>
+            <dialcolor>"yellow"</dialcolor>
+            <edgecolor>"green"</edgecolor>
+            <dotcolor>"black"</dotcolor>
+            <param_pin>1</param_pin>
+        </dial>
+        <dial>
+            <size>200</size>
+            <cpr>100</cpr>
+            <min_>0</min_>
+            <max_>1000</max_>
+            <text>"D"</text>
+            <initval>0</initval>
+            <resolution>0.1</resolution>
+            <halpin>"dpart"</halpin>
+            <dialcolor>"yellow"</dialcolor>
+            <edgecolor>"green"</edgecolor>
+            <dotcolor>"black"</dotcolor>
+            <param_pin>1</param_pin>
+        </dial>
     </vbox>
     
     <vbox>
         <label>
-            <text>"Temperature:"</text>
+            <text>"Voltage:"</text>
         </label>
         <number>
             <halpin>"voltage"</halpin>
