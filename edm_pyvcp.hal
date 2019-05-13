@@ -1,0 +1,2 @@
+net mysig motion.adaptive-feed <= pyvcp.scale-f
+net voltsig mcp3421.temp.in => pyvcp.voltage
