@@ -1,2 +1,21 @@
-net mysig motion.adaptive-feed <= pyvcp.scale-f
-net voltsig mcp3421.temp.in => pyvcp.voltage
+net voltsig mcp3421.voltage.out => pyvcp.vgap
+net voltsig => pyvcp.voltage
+
+#PIDs
+loadrt pid num_chan=1
+addf pid.0.do-pid-calcs thread_slow
+net psig pid.0.Pgain <= pyvcp.ppart-f
+net isig pid.0.Igain <= pyvcp.ipart-f
+net dsig pid.0.Dgain <= pyvcp.dpart-f
+setp pid.0.bias      0
+#setp pid.0.FF0       [AXIS_0]FF0
+#setp pid.0.FF1       [AXIS_0]FF1
+#setp pid.0.FF2       [AXIS_0]FF2
+setp pid.0.deadband  0.05
+setp pid.0.maxoutput 1
+setp pid.0.error-previous-target true
+#setp pid.0.maxerror .0005
+net setsig pyvcp.setvgap => pid.0.command
+net voltsig => pid.0.feedback
+net adaptivesig pid.0.output => motion.adaptive-feed
+setp pid.0.enable 1
