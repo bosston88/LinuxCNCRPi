@@ -1,12 +1,13 @@
 net voltsig mcp3421.voltage.out => pyvcp.vgap
 net voltsig => pyvcp.voltage
+net motion.adaptive-feed => pyvcp.adfeed.in
 
 #PIDs
 loadrt pid num_chan=1
 addf pid.0.do-pid-calcs thread_slow
-net psig pid.0.Pgain <= pyvcp.ppart-f
-net isig pid.0.Igain <= pyvcp.ipart-f
-net dsig pid.0.Dgain <= pyvcp.dpart-f
+net psig pid.0.Pgain <= pyvcp.ppart
+net isig pid.0.Igain <= pyvcp.ipart
+net dsig pid.0.Dgain <= pyvcp.dpart
 setp pid.0.bias      0
 #setp pid.0.FF0       [AXIS_0]FF0
 #setp pid.0.FF1       [AXIS_0]FF1
