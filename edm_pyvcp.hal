@@ -1,6 +1,6 @@
 net voltsig mcp3421.voltage.out => pyvcp.vgap
 net voltsig => pyvcp.voltage
-net motion.adaptive-feed => pyvcp.adfeed.in
+net adaptivesig motion.adaptive-feed => pyvcp.adfeed.in
 
 #PIDs
 loadrt pid num_chan=1
@@ -18,5 +18,5 @@ setp pid.0.error-previous-target true
 #setp pid.0.maxerror .0005
 net setsig pyvcp.setvgap => pid.0.command
 net voltsig => pid.0.feedback
-net adaptivesig pid.0.output => motion.adaptive-feed
+net pid.0.output => adaptivesig
 setp pid.0.enable 1
