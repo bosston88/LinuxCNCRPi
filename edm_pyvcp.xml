@@ -53,7 +53,7 @@
             <text>"PID parameters for adaptive feed"</text>
         </label>
         <dial>
-            <size>200</size>
+            <size>100</size>
             <cpr>100</cpr>
             <min_>0</min_>
             <max_>1000</max_>
@@ -67,7 +67,7 @@
             <param_pin>1</param_pin>
         </dial>
         <dial>
-            <size>200</size>
+            <size>100</size>
             <cpr>100</cpr>
             <min_>0</min_>
             <max_>1000</max_>
@@ -81,7 +81,7 @@
             <param_pin>1</param_pin>
         </dial>
         <dial>
-            <size>200</size>
+            <size>100</size>
             <cpr>100</cpr>
             <min_>0</min_>
             <max_>1000</max_>
@@ -94,6 +94,14 @@
             <dotcolor>"black"</dotcolor>
             <param_pin>1</param_pin>
         </dial>
+        <label>
+            <text>"Adaptive feed:"</text>
+        </label>
+        <number>
+            <halpin>"adfeed.in"</halpin>
+            <font>("Helvetica",20)</font>
+            <format>".2f"</format>
+        </number>
     </vbox>
     
     <vbox>
