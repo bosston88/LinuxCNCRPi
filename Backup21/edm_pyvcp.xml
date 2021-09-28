@@ -1,0 +1,118 @@
+<pyvcp>
+<tabs>
+    <names>["EDM", "MACHINE", "PID", "TEMP"]</names>
+    <vbox>
+        <dial>
+            <size>200</size>
+            <cpr>150</cpr>
+            <min_>0</min_>
+            <max_>150</max_>
+            <text>"Set Vgap"</text>
+            <initval>50</initval>
+            <resolution>1</resolution>
+            <halpin>"setvgap"</halpin>
+            <dialcolor>"yellow"</dialcolor>
+            <edgecolor>"green"</edgecolor>
+            <dotcolor>"black"</dotcolor>
+            <param_pin>1</param_pin>
+        </dial>
+        <label>
+            <text>"Vgap:"</text>
+            <font>("Helvetica",20)</font>
+        </label>
+        <number>
+            <halpin>"vgap"</halpin>
+            <font>("Helvetica",20)</font>
+            <format>"3.1f"</format>
+        </number>
+    </vbox>
+    
+    <vbox>
+        <label>
+            <text>"Spindle speed:"</text>
+        </label>
+        <bar>
+            <halpin>"spindle-speed"</halpin>
+            <max_>20000</max_>
+        </bar>
+        <scale>
+            <font>("Helvetica",16)</font>
+            <width>"25"</width>
+            <halpin>"scale"</halpin>
+            <resolution>0.1</resolution>
+            <orient>HORIZONTAL</orient>
+            <initval>1</initval>
+            <min_>-1</min_>
+            <max_>1</max_>
+            <param_pin>1</param_pin>
+        </scale>
+    </vbox>
+    
+    <vbox>
+        <label>
+            <text>"PID parameters for adaptive feed"</text>
+        </label>
+        <dial>
+            <size>100</size>
+            <cpr>100</cpr>
+            <min_>0</min_>
+            <max_>1000</max_>
+            <text>"P"</text>
+            <initval>0</initval>
+            <resolution>0.1</resolution>
+            <halpin>"ppart"</halpin>
+            <dialcolor>"yellow"</dialcolor>
+            <edgecolor>"green"</edgecolor>
+            <dotcolor>"black"</dotcolor>
+            <param_pin>1</param_pin>
+        </dial>
+        <dial>
+            <size>100</size>
+            <cpr>100</cpr>
+            <min_>0</min_>
+            <max_>1000</max_>
+            <text>"I"</text>
+            <initval>0</initval>
+            <resolution>0.1</resolution>
+            <halpin>"ipart"</halpin>
+            <dialcolor>"yellow"</dialcolor>
+            <edgecolor>"green"</edgecolor>
+            <dotcolor>"black"</dotcolor>
+            <param_pin>1</param_pin>
+        </dial>
+        <dial>
+            <size>100</size>
+            <cpr>100</cpr>
+            <min_>0</min_>
+            <max_>1000</max_>
+            <text>"D"</text>
+            <initval>0</initval>
+            <resolution>0.1</resolution>
+            <halpin>"dpart"</halpin>
+            <dialcolor>"yellow"</dialcolor>
+            <edgecolor>"green"</edgecolor>
+            <dotcolor>"black"</dotcolor>
+            <param_pin>1</param_pin>
+        </dial>
+        <label>
+            <text>"Adaptive feed:"</text>
+        </label>
+        <number>
+            <halpin>"adfeed.in"</halpin>
+            <font>("Helvetica",20)</font>
+            <format>".2f"</format>
+        </number>
+    </vbox>
+    
+    <vbox>
+        <label>
+            <text>"Voltage:"</text>
+        </label>
+        <number>
+            <halpin>"voltage"</halpin>
+            <font>("Helvetica",20)</font>
+            <format>".2f"</format>
+        </number>
+    </vbox>
+</tabs>
+</pyvcp>
